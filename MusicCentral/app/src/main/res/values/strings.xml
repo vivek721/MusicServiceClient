@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">MusicCentral</string>
+    <string-array name="title">
+        <item>SoundHelix Song 1</item>
+        <item>SoundHelix Song 2</item>
+        <item>SoundHelix Song 3</item>
+        <item>SoundHelix Song 4</item>
+        <item>SoundHelix Song 5</item>
+        <item>SoundHelix Song 6</item>
+        <item>SoundHelix Song 7</item>
+    </string-array>
+    <string-array name="artist">
+        <item>T. Schürger1</item>
+        <item>T. Schürger2</item>
+        <item>T. Schürger3</item>
+        <item>T. Schürger4</item>
+        <item>T. Schürger5</item>
+        <item>T. Schürger6</item>
+        <item>T. Schürger7</item>
+    </string-array>
+    <string-array name="url">
+        <item>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3</item>
+        <item>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3</item>
+        <item>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3</item>
+        <item>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3</item>
+        <item>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3</item>
+        <item>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3</item>
+        <item>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3</item>
+    </string-array>
+</resources>
