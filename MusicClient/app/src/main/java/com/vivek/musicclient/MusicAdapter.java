@@ -1,5 +1,6 @@
 package com.vivek.musicclient;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> {
     private String[] title;
     private String[] artist;
-    private Integer[] imageId;
+    private Bitmap[] image = new Bitmap[7];
     private RVClickListener RVlistener; //listener defined in main activity
 
-    public MusicAdapter(String[] title, String[] artist, Integer[] imageId,
-                        RVClickListener listener) {
+    public MusicAdapter(String[] title, String[] artist,
+                        Bitmap[] image, RVClickListener listener) {
         this.title = title;
         this.artist = artist;
-        this.imageId = imageId;
         this.RVlistener = listener;
+        this.image = image;
     }
 
     @NonNull
@@ -37,7 +38,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.mTitle.setText(title[position]);
         holder.mArtist.setText(artist[position]);
-        holder.mImageView.setImageResource(imageId[position]);
+        holder.mImageView.setImageBitmap(image[position]);
     }
 
     @Override
@@ -56,6 +57,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
             mImageView = itemView.findViewById(R.id.imageView);
             mTitle = itemView.findViewById(R.id.title);
             mArtist = itemView.findViewById(R.id.artist);
+
             this.listener = passedListener;
 
             itemView.setOnClickListener(this); //set short click listener

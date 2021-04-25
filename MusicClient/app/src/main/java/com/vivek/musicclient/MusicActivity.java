@@ -2,6 +2,7 @@ package com.vivek.musicclient;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +20,6 @@ public class MusicActivity extends AppCompatActivity {
     private String[] artist;
     private Bitmap[] image = new Bitmap[7];
     private String[] url;
-    private Integer[] imageId = new Integer[7];
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -31,6 +31,7 @@ public class MusicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music);
+        Log.i(TAG, "onCreate: ");
 
         bundle = getIntent().getExtras();
         title = bundle.getStringArray("title");
@@ -54,7 +55,7 @@ public class MusicActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new MusicAdapter(title, artist, imageId, listener);
+        mAdapter = new MusicAdapter(title, artist, image, listener);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -86,12 +87,16 @@ public class MusicActivity extends AppCompatActivity {
     }
 
     public void getImageId() {
-        imageId[0] = R.drawable.image1;
-        imageId[1] = R.drawable.image2;
-        imageId[2] = R.drawable.image3;
-        imageId[3] = R.drawable.image4;
-        imageId[4] = R.drawable.image5;
-        imageId[5] = R.drawable.image6;
-        imageId[6] = R.drawable.image7;
+        byte[] byteArray;
+        String s;
+        for (int i = 0; i < 7; i++) {
+            if (i == 5) {
+                s = "image" + 3;
+            } else {
+                s = "image" + (i + 1);
+            }
+            byteArray = getIntent().getByteArrayExtra(s);
+            image[i] = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+        }
     }
 }

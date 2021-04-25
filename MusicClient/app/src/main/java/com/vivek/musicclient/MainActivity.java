@@ -12,7 +12,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.vivek.musicaidl.MusicAIDL;
@@ -33,7 +32,6 @@ public class MainActivity extends Activity {
     private byte[] byteArray5;
     private byte[] byteArray6;
     private byte[] byteArray7;
-    private ImageView imageView;
     private Button bindButton;
     private Button unbindButton;
     private Button showMusicButton;
@@ -63,7 +61,6 @@ public class MainActivity extends Activity {
         bindButton = (Button) findViewById(R.id.bind);
         unbindButton = (Button) findViewById(R.id.unbind);
         showMusicButton = (Button) findViewById(R.id.allMusic);
-        imageView = (ImageView) findViewById(R.id.image);
 
         Log.i(TAG, "onCreate: " + bindStatus);
 
@@ -83,9 +80,21 @@ public class MainActivity extends Activity {
                 mBundle = mMusicAIDL.musicDetails();
                 setAllMusicDetails(mBundle);
                 Intent intent = new Intent(this, MusicActivity.class);
-                intent.putExtra("title", title);
-                intent.putExtra("artist", artist);
-                intent.putExtra("url", url);
+                Bundle b = new Bundle();
+                b.putByteArray("image1", byteArray1);
+                b.putByteArray("image2", byteArray2);
+                b.putByteArray("image3" , byteArray3);
+                b.putByteArray("image4", byteArray4);
+                b.putByteArray("image5", byteArray5);
+                b.putByteArray("image7", byteArray7);
+                b.putStringArray("title", title);
+                b.putStringArray("artist", artist);
+                b.putStringArray("url", url);
+                intent.putExtras(b);
+//                intent.putExtra("title", title);
+//                intent.putExtra("artist", artist);
+//                intent.putExtra("url", url);
+
                 startActivity(intent);
 
             } catch (RemoteException e) {
@@ -101,12 +110,33 @@ public class MainActivity extends Activity {
         artist = mBundle.getStringArray("artist");
         url = mBundle.getStringArray("url");
         image[0] = mBundle.getParcelable("image1");
+        image[0].compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byteArray1 = stream.toByteArray();
+        stream = new ByteArrayOutputStream();
         image[1] = mBundle.getParcelable("image2");
+        image[1].compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byteArray2 = stream.toByteArray();
+        stream = new ByteArrayOutputStream();
         image[2] = mBundle.getParcelable("image3");
+        image[2].compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byteArray3 = stream.toByteArray();
+        stream = new ByteArrayOutputStream();
         image[3] = mBundle.getParcelable("image4");
+        image[3].compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byteArray4 = stream.toByteArray();
+        stream = new ByteArrayOutputStream();
         image[4] = mBundle.getParcelable("image5");
+        image[4].compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byteArray5 = stream.toByteArray();
+        stream = new ByteArrayOutputStream();
         image[5] = mBundle.getParcelable("image6");
+        image[5].compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byteArray6 = stream.toByteArray();
+        Log.i(TAG, "setAllMusicDetails: " + image[5]);
+        stream = new ByteArrayOutputStream();
         image[6] = mBundle.getParcelable("image7");
+        image[6].compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byteArray7 = stream.toByteArray();
     }
 
     protected void checkBindingAndUnbind() {
