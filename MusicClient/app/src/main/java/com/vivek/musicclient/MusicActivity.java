@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,7 @@ public class MusicActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ImageView mImageView;
 
     private Bundle bundle;
     private MediaPlayer player;
@@ -58,7 +61,13 @@ public class MusicActivity extends AppCompatActivity {
         mAdapter = new MusicAdapter(title, artist, image, listener);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-
+        mImageView = (ImageView) findViewById(R.id.pauseButton);
+        mImageView.setOnClickListener(v -> {
+            if (player != null) {
+                player.stop();
+                mImageView.setVisibility(View.INVISIBLE);
+            }
+        });
 
     }
 
@@ -67,6 +76,7 @@ public class MusicActivity extends AppCompatActivity {
             player.stop();
         }
         player = new MediaPlayer();
+        mImageView.setVisibility(View.VISIBLE);
         try {
             player.setDataSource(audioUrl);
             // below line is use to prepare
@@ -87,16 +97,13 @@ public class MusicActivity extends AppCompatActivity {
     }
 
     public void getImageId() {
-        byte[] byteArray;
+        byte[][] byteArray = new byte[7][];
         String s;
         for (int i = 0; i < 7; i++) {
-            if (i == 5) {
-                s = "image" + 3;
-            } else {
-                s = "image" + (i + 1);
-            }
-            byteArray = getIntent().getByteArrayExtra(s);
-            image[i] = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            s = "image" + (i + 1);
+            byteArray[i] = getIntent().getByteArrayExtra(s);
+            image[i] = BitmapFactory.decodeByteArray(byteArray[i], 0, byteArray[i].length);
+            Log.i(TAG, "getImageId: " + s + " " + byteArray);
         }
     }
 }

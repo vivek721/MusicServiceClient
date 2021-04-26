@@ -25,13 +25,7 @@ public class MainActivity extends Activity {
     private String[] artist;
     private Bitmap[] image = new Bitmap[7];
     private String[] url;
-    private byte[] byteArray1;
-    private byte[] byteArray2;
-    private byte[] byteArray3;
-    private byte[] byteArray4;
-    private byte[] byteArray5;
-    private byte[] byteArray6;
-    private byte[] byteArray7;
+    private byte[][] byteArray = new byte[7][];
     private Button bindButton;
     private Button unbindButton;
     private Button showMusicButton;
@@ -52,6 +46,7 @@ public class MainActivity extends Activity {
             bindStatus = false;
         }
     };
+    private Bundle b = new Bundle();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,21 +75,7 @@ public class MainActivity extends Activity {
                 mBundle = mMusicAIDL.musicDetails();
                 setAllMusicDetails(mBundle);
                 Intent intent = new Intent(this, MusicActivity.class);
-                Bundle b = new Bundle();
-                b.putByteArray("image1", byteArray1);
-                b.putByteArray("image2", byteArray2);
-                b.putByteArray("image3" , byteArray3);
-                b.putByteArray("image4", byteArray4);
-                b.putByteArray("image5", byteArray5);
-                b.putByteArray("image7", byteArray7);
-                b.putStringArray("title", title);
-                b.putStringArray("artist", artist);
-                b.putStringArray("url", url);
                 intent.putExtras(b);
-//                intent.putExtra("title", title);
-//                intent.putExtra("artist", artist);
-//                intent.putExtra("url", url);
-
                 startActivity(intent);
 
             } catch (RemoteException e) {
@@ -105,38 +86,23 @@ public class MainActivity extends Activity {
     }
 
     private void setAllMusicDetails(Bundle mBundle) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
         title = mBundle.getStringArray("title");
         artist = mBundle.getStringArray("artist");
         url = mBundle.getStringArray("url");
-        image[0] = mBundle.getParcelable("image1");
-        image[0].compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byteArray1 = stream.toByteArray();
-        stream = new ByteArrayOutputStream();
-        image[1] = mBundle.getParcelable("image2");
-        image[1].compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byteArray2 = stream.toByteArray();
-        stream = new ByteArrayOutputStream();
-        image[2] = mBundle.getParcelable("image3");
-        image[2].compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byteArray3 = stream.toByteArray();
-        stream = new ByteArrayOutputStream();
-        image[3] = mBundle.getParcelable("image4");
-        image[3].compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byteArray4 = stream.toByteArray();
-        stream = new ByteArrayOutputStream();
-        image[4] = mBundle.getParcelable("image5");
-        image[4].compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byteArray5 = stream.toByteArray();
-        stream = new ByteArrayOutputStream();
-        image[5] = mBundle.getParcelable("image6");
-        image[5].compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byteArray6 = stream.toByteArray();
-        Log.i(TAG, "setAllMusicDetails: " + image[5]);
-        stream = new ByteArrayOutputStream();
-        image[6] = mBundle.getParcelable("image7");
-        image[6].compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byteArray7 = stream.toByteArray();
+
+        b.putStringArray("title", title);
+        b.putStringArray("artist", artist);
+        b.putStringArray("url", url);
+
+        for (int i = 0; i < 7; i++) {
+            String s = "image" + (i + 1);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            image[i] = mBundle.getParcelable(s);
+            image[i].compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byteArray[i] = stream.toByteArray();
+            b.putByteArray(s, byteArray[i]);
+        }
     }
 
     protected void checkBindingAndUnbind() {

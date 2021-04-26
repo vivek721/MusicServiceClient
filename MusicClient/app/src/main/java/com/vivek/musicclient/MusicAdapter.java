@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> {
+    private static final String TAG = "MusicAdapter";
     private String[] title;
     private String[] artist;
     private Bitmap[] image = new Bitmap[7];
@@ -36,6 +37,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Log.i(TAG, "onBindViewHolder: ");
         holder.mTitle.setText(title[position]);
         holder.mArtist.setText(artist[position]);
         holder.mImageView.setImageBitmap(image[position]);
