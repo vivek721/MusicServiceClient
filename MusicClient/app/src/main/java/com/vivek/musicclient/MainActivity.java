@@ -1,38 +1,49 @@
 package com.vivek.musicclient;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.vivek.musicaidl.MusicAIDL;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final String TAG = "MainActivity";
+    public static MusicAIDL mMusicAIDL;
+    MediaPlayer mPlayer;
     private boolean bindStatus = false;
     private String[] title;
     private String[] artist;
     private Bitmap[] image = new Bitmap[7];
-    private String[] url;
+    private Spinner spinner;
     private byte[][] byteArray = new byte[7][];
     private Button bindButton;
     private Button unbindButton;
     private Button showMusicButton;
-    private MusicAIDL mMusicAIDL;
     private final ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.i(TAG, "onServiceConnected: ");
             mMusicAIDL = MusicAIDL.Stub.asInterface(service);
             bindStatus = true;
 
@@ -46,6 +57,10 @@ public class MainActivity extends Activity {
             bindStatus = false;
         }
     };
+    private TextView singleTitle;
+    private TextView singleArtist;
+    private ImageView singleImage;
+    private ImageView playPause;
     private Bundle b = new Bundle();
 
     @Override
@@ -53,15 +68,22 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        spinner = (Spinner) findViewById(R.id.planets_spinner);
         bindButton = (Button) findViewById(R.id.bind);
         unbindButton = (Button) findViewById(R.id.unbind);
         showMusicButton = (Button) findViewById(R.id.allMusic);
+        singleTitle = (TextView) findViewById(R.id.singleTitle);
+        singleArtist = (TextView) findViewById(R.id.singleArtist);
+        singleImage = (ImageView) findViewById(R.id.singleImageView);
+        playPause = (ImageView) findViewById(R.id.playPause);
 
-        Log.i(TAG, "onCreate: " + bindStatus);
+        buttonStatusChange(false);
 
         bindButton.setOnClickListener(v -> {
             checkBindingAndBind();
+
             buttonStatusChange(false);
+
         });
 
         unbindButton.setOnClickListener(v -> {
@@ -69,31 +91,43 @@ public class MainActivity extends Activity {
         });
 
         showMusicButton.setOnClickListener(v -> {
+            if (mPlayer != null)
+                mPlayer.stop();
             checkBindingAndUnbind();
             try {
                 Bundle mBundle;
                 mBundle = mMusicAIDL.musicDetails();
                 setAllMusicDetails(mBundle);
-                Intent intent = new Intent(this, MusicActivity.class);
-                intent.putExtras(b);
-                startActivity(intent);
-
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
-
+            Intent intent = new Intent(this, MusicActivity.class);
+            intent.putExtras(b);
+            startActivity(intent);
         });
+
+        playPause.setOnClickListener(v -> {
+            mPlayer.stop();
+            playPause.setVisibility(View.INVISIBLE);
+            singleImage.setImageBitmap(null);
+            singleTitle.setText("");
+            singleArtist.setText("");
+        });
+
+        ArrayAdapter<CharSequence> spinnerArrayAdapter = ArrayAdapter.createFromResource(this,
+                R.array.songTitle, R.layout.spinner_item);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerArrayAdapter);
+        spinner.setOnItemSelectedListener(this);
     }
 
     private void setAllMusicDetails(Bundle mBundle) {
 
         title = mBundle.getStringArray("title");
         artist = mBundle.getStringArray("artist");
-        url = mBundle.getStringArray("url");
 
         b.putStringArray("title", title);
         b.putStringArray("artist", artist);
-        b.putStringArray("url", url);
 
         for (int i = 0; i < 7; i++) {
             String s = "image" + (i + 1);
@@ -170,5 +204,55 @@ public class MainActivity extends Activity {
             unbindButton.setBackgroundResource(R.color.buttonDisable);
             showMusicButton.setBackgroundResource(R.color.buttonDisable);
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Log.i(TAG, "onItemSelected: " + position);
+        if (bindStatus) {
+            if (position == 0) {
+                Toast.makeText(this, "Select a song", Toast.LENGTH_LONG).show();
+                singleImage.setImageBitmap(null);
+                singleTitle.setText("");
+                singleArtist.setText("");
+            } else {
+                Bundle mBundle;
+                try {
+                    mBundle = mMusicAIDL.getOneSongDetails(position - 1);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    Bitmap bmp = mBundle.getParcelable("image");
+                    singleImage.setImageBitmap(bmp);
+                    singleTitle.setText(mBundle.getString("title"));
+                    singleArtist.setText(mBundle.getString("artist"));
+                    playMusic(mMusicAIDL.getSongURL(position - 1));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Toast.makeText(this, "Bind service First", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void playMusic(String audioUrl) {
+        if (mPlayer != null) {
+            mPlayer.stop();
+        }
+        mPlayer = new MediaPlayer();
+        playPause.setVisibility(View.VISIBLE);
+        try {
+            mPlayer.setDataSource(audioUrl);
+            // below line is use to prepare
+            // and start our media player.
+            mPlayer.prepare();
+            mPlayer.start();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
     }
 }

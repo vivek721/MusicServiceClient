@@ -1,10 +1,14 @@
 package com.vivek.musicclient;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +17,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.vivek.musicaidl.MusicAIDL;
 
 import java.io.IOException;
 
@@ -29,6 +35,7 @@ public class MusicActivity extends AppCompatActivity {
 
     private Bundle bundle;
     private MediaPlayer player;
+    MainActivity mAcivity = new MainActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +46,21 @@ public class MusicActivity extends AppCompatActivity {
         bundle = getIntent().getExtras();
         title = bundle.getStringArray("title");
         artist = bundle.getStringArray("artist");
-        url = bundle.getStringArray("url");
+//        url = bundle.getStringArray("url");
         getImageId();
 
         RVClickListener listener = (view, position) -> {
             Log.i(TAG, "Starting Music : " + title[position]);
             Toast.makeText(this, " Starting Music :" + title[position],
                     Toast.LENGTH_SHORT).show();
+            try {
+                playMusic(mAcivity.mMusicAIDL.getSongURL(position));
+                Log.i(TAG, "onCreate: " + mAcivity.mMusicAIDL.getSongURL(position));
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
 
-            playMusic(url[position]);
 
-            Intent musicintent = new Intent(this,
-                    MusicNotificationService.class);
-            musicintent.putExtra("URL", url[position]);
-            startService(musicintent);
         };
 
         mRecyclerView = findViewById(R.id.recyclerView);

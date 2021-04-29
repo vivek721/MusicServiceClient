@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">MusicClient</string>
+    <string-array name="songTitle">
+        <item>Select Song</item>
+        <item>SoundHelix Song 1</item>
+        <item>SoundHelix Song 2</item>
+        <item>SoundHelix Song 3</item>
+        <item>SoundHelix Song 4</item>
+        <item>SoundHelix Song 5</item>
+        <item>SoundHelix Song 6</item>
+        <item>SoundHelix Song 7</item>
+    </string-array>
 </resources>

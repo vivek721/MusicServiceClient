@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/background"
     tools:context=".MainActivity">
 
     <Button
@@ -49,6 +49,52 @@
         android:textColor="@color/white"
         android:textSize="20dp"
         android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/planets_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:contentDescription="Song List"
+        android:outlineAmbientShadowColor="@color/white"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp">
+
+        <ImageView
+            android:id="@+id/singleImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:padding="2dp" />
+
+        <TextView
+            android:id="@+id/singleTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/singleImageView"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/singleArtist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/singleTitle"
+            android:layout_toEndOf="@+id/singleImageView"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="italic" />
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/playPause"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/pause_music"
+        android:visibility="invisible"/>
 
 
 </LinearLayout>
